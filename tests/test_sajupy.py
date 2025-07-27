@@ -97,8 +97,7 @@ class TestConversionFunctions:
     
     def test_solar_to_lunar(self):
         """양력→음력 변환 테스트"""
-        result_str = solar_to_lunar(2024, 1, 1)
-        result = json.loads(result_str)
+        result = solar_to_lunar(2024, 1, 1)
         
         assert 'lunar_year' in result
         assert 'lunar_month' in result
@@ -108,8 +107,7 @@ class TestConversionFunctions:
     
     def test_lunar_to_solar(self):
         """음력→양력 변환 테스트"""
-        result_str = lunar_to_solar(2023, 11, 20)
-        result = json.loads(result_str)
+        result = lunar_to_solar(2023, 11, 20)
         
         assert 'solar_year' in result
         assert 'solar_month' in result  
@@ -119,8 +117,7 @@ class TestConversionFunctions:
     
     def test_lunar_month_info(self):
         """음력 월 정보 조회 테스트"""
-        result_str = get_lunar_month_info(2023, 2)
-        result = json.loads(result_str)
+        result = get_lunar_month_info(2023, 2)
         
         assert 'lunar_year' in result
         assert 'lunar_month' in result
@@ -133,10 +130,9 @@ class TestMainFunctions:
     
     def test_calculate_saju_function(self):
         """calculate_saju 함수 테스트"""
-        result_str = calculate_saju(1990, 10, 10, 14, 30)
-        result = json.loads(result_str)
+        result = calculate_saju(1990, 10, 10, 14, 30)
         
-        assert isinstance(result_str, str)
+        assert isinstance(result, dict)
         assert 'year_pillar' in result
         assert 'month_pillar' in result
         assert 'day_pillar' in result
@@ -144,12 +140,11 @@ class TestMainFunctions:
     
     def test_calculate_saju_with_city(self):
         """도시명으로 계산 테스트"""
-        result_str = calculate_saju(
+        result = calculate_saju(
             1990, 10, 10, 14, 30,
             city="Seoul",
             use_solar_time=True
         )
-        result = json.loads(result_str)
         
         assert 'solar_correction' in result
         assert result['solar_correction']['city'] == "Seoul"

@@ -114,7 +114,7 @@ print(month_info)
 
 ## 출력 형식
 
-`calculate_saju` 함수는 다음과 같은 JSON 형식의 결과를 반환합니다:
+`calculate_saju` 함수는 다음과 같은 딕셔너리 결과를 반환합니다:
 
 ```json
 {

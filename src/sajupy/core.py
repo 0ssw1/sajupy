@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Any
 import json
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
@@ -342,7 +342,7 @@ class SajuCalculator:
     def calculate_saju(self, year: int, month: int, day: int, hour: int, minute: int = 0,
                       city: Optional[str] = None, longitude: Optional[float] = None, 
                       use_solar_time: bool = False, utc_offset: float = 9,
-                      early_zi_time: bool = True) -> Dict[str, any]:
+                      early_zi_time: bool = True) -> Dict[str, Any]:
         """
         생년월일시분을 입력받아 사주팔자를 계산합니다.
         
@@ -558,7 +558,7 @@ class SajuCalculator:
                                    longitude: Optional[float] = None,
                                    use_solar_time: bool = False,
                                    utc_offset: float = 9,
-                                   early_zi_time: bool = True) -> Dict[str, any]:
+                                   early_zi_time: bool = True) -> Dict[str, Any]:
         """datetime 객체로부터 사주를 계산합니다."""
         return self.calculate_saju(dt.year, dt.month, dt.day, dt.hour, dt.minute, 
                                  city, longitude, use_solar_time, utc_offset, early_zi_time)
@@ -573,7 +573,7 @@ class SajuCalculator:
             "message": "All city names are now supported. Use the city parameter in calculate_saju."
         }
 
-    def solar_to_lunar(self, year: int, month: int, day: int) -> Dict[str, any]:
+    def solar_to_lunar(self, year: int, month: int, day: int) -> Dict[str, Any]:
         """
         양력을 음력으로 변환합니다.
         
@@ -628,7 +628,7 @@ class SajuCalculator:
             raise ValueError(f"양력-음력 변환 오류: {str(e)}")
     
     def lunar_to_solar(self, lunar_year: int, lunar_month: int, lunar_day: int, 
-                      is_leap_month: bool = False) -> Dict[str, any]:
+                      is_leap_month: bool = False) -> Dict[str, Any]:
         """
         음력을 양력으로 변환합니다.
         
@@ -771,9 +771,9 @@ def get_saju_calculator() -> SajuCalculator:
 def calculate_saju(year: int, month: int, day: int, hour: int, minute: int = 0, 
                   city: Optional[str] = None, longitude: Optional[float] = None,
                   use_solar_time: bool = False, utc_offset: float = 9,
-                  early_zi_time: bool = True) -> str:
+                  early_zi_time: bool = True) -> Dict[str, Any]:
     """
-    생년월일시분을 입력받아 사주팔자를 계산하고 JSON 문자열로 반환합니다.
+    생년월일시분을 입력받아 사주팔자를 계산하고 딕셔너리로 반환합니다.
     
     Parameters:
     -----------
@@ -800,28 +800,26 @@ def calculate_saju(year: int, month: int, day: int, hour: int, minute: int = 0,
         
     Returns:
     --------
-    str
-        JSON 형식의 사주팔자 정보
+    Dict[str, Any]
+        사주팔자 정보 딕셔너리
     """
     calculator = get_saju_calculator()
     result = calculator.calculate_saju(year, month, day, hour, minute, city, longitude, 
                                      use_solar_time, utc_offset, early_zi_time)
-    return json.dumps(result, ensure_ascii=False, indent=2)
+    return result
 
 
 def print_saju(year: int, month: int, day: int, hour: int, minute: int = 0,
               city: Optional[str] = None, longitude: Optional[float] = None,
               use_solar_time: bool = False, utc_offset: float = 9,
-              early_zi_time: bool = True) -> str:
-    """사주를 계산하고 JSON 형식으로 반환합니다."""
-    calculator = get_saju_calculator()
-    saju = calculator.calculate_saju(year, month, day, hour, minute, city, longitude, 
-                                   use_solar_time, utc_offset, early_zi_time)
-    return json.dumps(saju, ensure_ascii=False, indent=2)
+              early_zi_time: bool = True) -> Dict[str, Any]:
+    """[Deprecated] calculate_saju를 사용하세요. 사주를 계산하고 딕셔너리로 반환합니다."""
+    return calculate_saju(year, month, day, hour, minute, city, longitude, 
+                         use_solar_time, utc_offset, early_zi_time)
 
 
-def get_saju_details(saju_dict: Dict[str, any]) -> str:
-    """사주 딕셔너리를 받아 상세 정보를 JSON 문자열로 반환합니다."""
+def get_saju_details(saju_dict: Dict[str, Any]) -> Dict[str, Any]:
+    """사주 딕셔너리를 받아 상세 정보를 구조화된 딕셔너리로 반환합니다."""
     details = {
         "pillars": {
             "year": {
@@ -852,20 +850,20 @@ def get_saju_details(saju_dict: Dict[str, any]) -> str:
         "solar_correction": saju_dict.get('solar_correction')
     }
     
-    return json.dumps(details, ensure_ascii=False, indent=2)
+    return details
 
 
-def get_available_cities() -> str:
+def get_available_cities() -> Dict[str, str]:
     """
     [Deprecated] 이제 모든 도시를 지원합니다.
     """
-    return json.dumps({
+    return {
         "notice": "This function is deprecated.",
         "message": "All city names are now supported. Use the city parameter in calculate_saju."
-    }, ensure_ascii=False, indent=2)
+    }
 
 
-def solar_to_lunar(year: int, month: int, day: int) -> str:
+def solar_to_lunar(year: int, month: int, day: int) -> Dict[str, Any]:
     """
     양력을 음력으로 변환합니다.
     
@@ -880,8 +878,8 @@ def solar_to_lunar(year: int, month: int, day: int) -> str:
         
     Returns:
     --------
-    str
-        JSON 형식의 음력 날짜 정보
+    Dict[str, Any]
+        음력 날짜 정보 딕셔너리
         
     Example:
     --------
@@ -891,17 +889,17 @@ def solar_to_lunar(year: int, month: int, day: int) -> str:
         "lunar_year": 2023,
         "lunar_month": 11,
         "lunar_day": 20,
-        "is_leap_month": false,
+        "is_leap_month": False,
         "solar_date": "2024-01-01"
     }
     """
     calculator = get_saju_calculator()
     result = calculator.solar_to_lunar(year, month, day)
-    return json.dumps(result, ensure_ascii=False, indent=2)
+    return result
 
 
 def lunar_to_solar(lunar_year: int, lunar_month: int, lunar_day: int, 
-                  is_leap_month: bool = False) -> str:
+                  is_leap_month: bool = False) -> Dict[str, Any]:
     """
     음력을 양력으로 변환합니다.
     
@@ -918,8 +916,8 @@ def lunar_to_solar(lunar_year: int, lunar_month: int, lunar_day: int,
         
     Returns:
     --------
-    str
-        JSON 형식의 양력 날짜 정보
+    Dict[str, Any]
+        양력 날짜 정보 딕셔너리
         
     Example:
     --------
@@ -935,10 +933,10 @@ def lunar_to_solar(lunar_year: int, lunar_month: int, lunar_day: int,
     """
     calculator = get_saju_calculator()
     result = calculator.lunar_to_solar(lunar_year, lunar_month, lunar_day, is_leap_month)
-    return json.dumps(result, ensure_ascii=False, indent=2)
+    return result
 
 
-def get_lunar_month_info(lunar_year: int, lunar_month: int) -> str:
+def get_lunar_month_info(lunar_year: int, lunar_month: int) -> Dict[str, Any]:
     """
     특정 음력 년월의 정보를 조회합니다.
     
@@ -951,8 +949,8 @@ def get_lunar_month_info(lunar_year: int, lunar_month: int) -> str:
         
     Returns:
     --------
-    str
-        JSON 형식의 월 정보 (일수, 윤달 여부 등)
+    Dict[str, Any]
+        월 정보 딕셔너리 (일수, 윤달 여부 등)
         
     Example:
     --------
@@ -961,7 +959,7 @@ def get_lunar_month_info(lunar_year: int, lunar_month: int) -> str:
     {
         "lunar_year": 2023,
         "lunar_month": 2,
-        "has_leap_month": true,
+        "has_leap_month": True,
         "regular_month_days": 29,
         "leap_month_days": 30
     }
@@ -985,11 +983,11 @@ def get_lunar_month_info(lunar_year: int, lunar_month: int) -> str:
             leap_days = calculator.get_lunar_month_days(lunar_year, lunar_month, True)
             result["leap_month_days"] = leap_days
         
-        return json.dumps(result, ensure_ascii=False, indent=2)
+        return result
         
     except Exception as e:
-        return json.dumps({
+        return {
             "error": str(e),
             "lunar_year": lunar_year,
             "lunar_month": lunar_month
-        }, ensure_ascii=False, indent=2)
+        }
