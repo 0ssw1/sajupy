@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include requirements.txt
+include src/sajupy/calendar_data.csv
+recursive-include src *.py
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .DS_Store 
